@@ -29,12 +29,11 @@ const getUsersData = async (url) => {
 
 getUsersData(URL);
 
-const prepareUsersData = (data)=>{
+const prepareUsersData = (data) => {
     data.map(user => {
         let userInfo = {
             picture: user.picture.large,
-            firstName: user.name.first,
-            lastName: user.name.last,
+            fullName: user.name.first + ' ' + user.name.last,
             gender: user.gender,
             age: user.dob.age,
             phone: user.phone,
@@ -52,7 +51,7 @@ const renderUsers = (listOfUsers) => {
         userCardParentELement.insertAdjacentHTML('beforeend',
             `<div class="user__card">
                 <img src="${user.picture}" alt="user photo" class="user__photo">
-                <span class="user__name">${user.firstName} ${user.lastName}</span>
+                <span class="user__name">${user.fullName}</span>
                 <span class="user__info">${user.gender}</span>
                 <span class="user__info">${user.age} y.o.</span>
                 <span class="user__info">${user.phone}</span>
@@ -62,22 +61,63 @@ const renderUsers = (listOfUsers) => {
     })
 };
 const radioGender = document.querySelectorAll("input[name='search_by_gender']");
+const radioAge = document.querySelectorAll("input[name='search_age']");
+const radioAlphabet = document.querySelectorAll("input[name='search_by_alphabet']");
+const search = document.querySelector('#search_name').value.toLowerCase();
 
-const filterByGender = (id, listOfUsers) => {
+const sortUsers = (id, listOfUsers) => {
     let copyListOfUsers = [...listOfUsers];
-    if (id === 'male'|| id === 'female'){
-        copyListOfUsers = listOfUsers.filter(user=>user.gender === id);
-    }else {
+
+    if (id === 'search_age_up') {
+        copyListOfUsers = listOfUsers.sort((first, next) => compareAge(first, next))
+    } else if (id === 'search_age_down') {
+        copyListOfUsers = listOfUsers.sort((first, next) => compareAge(next, first))
+    } else {
         copyListOfUsers = [...listOfUsers];
-        radioGender.forEach(radio=> radio.checked = false)
+        radioAge.forEach(radio => radio.checked = false);
     }
+
+    if (id === 'search_by_alphabet_up') {
+        copyListOfUsers = listOfUsers.sort((first, next) => compareName(first, next))
+    } else if (id === 'search_by_alphabet_down') {
+        copyListOfUsers = listOfUsers.sort((first, next) => compareName(next, first))
+    } else {
+        copyListOfUsers = [...listOfUsers];
+        radioAlphabet.forEach(radio => radio.checked = false);
+    }
+
+    if (id === 'male' || id === 'female') {
+        copyListOfUsers = listOfUsers.filter(user => user.gender === id);
+    } else {
+        copyListOfUsers = [...listOfUsers];
+        radioGender.forEach(radio => radio.checked = false);
+    }
+////////////////////////////////
+    if (id === 'search_name') {
+        copyListOfUsers = listOfUsers.filter(user => {
+            user.fullName.toLowerCase();
+            return user.fullName.indexOf(search) > -1;
+        })
+    } else {
+        copyListOfUsers = [...listOfUsers];
+        search.value = '';
+    }
+/////////////////////////////////////
     renderUsers(copyListOfUsers);
 };
 
-const filterContainer = document.querySelector('.container__filter');
+const compareAge = (firstUser, nextUser) => {
+    return firstUser.age - nextUser.age;
+};
 
-filterContainer.addEventListener("click", ({target})=>{
+const compareName = (firstUser, nextUser) => {
+    first = firstUser.fullName.toLowerCase();
+    next = nextUser.fullName.toLowerCase();
+    return first < next ? -1 : 1;
+};
+
+const filterContainer = document.querySelector('.container__filter');
+filterContainer.addEventListener("click", ({ target }) => {
     const copyUsersData = [...usersData];
-    filterByGender(target.id, copyUsersData);
-    console.log(target)
+    sortUsers(target.id, copyUsersData);
 });
