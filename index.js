@@ -60,49 +60,45 @@ const renderUsers = (listOfUsers) => {
         )
     })
 };
+
 const radioGender = document.querySelectorAll("input[name='search_by_gender']");
 const radioAge = document.querySelectorAll("input[name='search_age']");
 const radioAlphabet = document.querySelectorAll("input[name='search_by_alphabet']");
-const search = document.querySelector('#search_name').value.toLowerCase();
+
+const searchInput = document.querySelector(".input__search__name");
+const resetBtn = document.querySelector(".reset__button");
+
+let copyListOfUsers = [];
+
+let searchValue;
+let idgender;
 
 const sortUsers = (id, listOfUsers) => {
-    let copyListOfUsers = [...listOfUsers];
+    copyListOfUsers = [...listOfUsers];
 
-    if (id === 'search_age_up') {
-        copyListOfUsers = listOfUsers.sort((first, next) => compareAge(first, next))
-    } else if (id === 'search_age_down') {
-        copyListOfUsers = listOfUsers.sort((first, next) => compareAge(next, first))
-    } else {
-        copyListOfUsers = [...listOfUsers];
-        radioAge.forEach(radio => radio.checked = false);
-    }
+    if (id === 'search_age_up') { copyListOfUsers = listOfUsers.sort((first, next) => compareAge(first, next)) }
+    if (id === 'search_age_down') { copyListOfUsers = listOfUsers.sort((first, next) => compareAge(next, first)) }
 
-    if (id === 'search_by_alphabet_up') {
-        copyListOfUsers = listOfUsers.sort((first, next) => compareName(first, next))
-    } else if (id === 'search_by_alphabet_down') {
-        copyListOfUsers = listOfUsers.sort((first, next) => compareName(next, first))
-    } else {
-        copyListOfUsers = [...listOfUsers];
-        radioAlphabet.forEach(radio => radio.checked = false);
-    }
+    if (id === 'search_by_alphabet_up') { copyListOfUsers = listOfUsers.sort((first, next) => compareName(first, next)) }
+    if (id === 'search_by_alphabet_down') { copyListOfUsers = listOfUsers.sort((first, next) => compareName(next, first)) }
 
     if (id === 'male' || id === 'female') {
-        copyListOfUsers = listOfUsers.filter(user => user.gender === id);
-    } else {
-        copyListOfUsers = [...listOfUsers];
-        radioGender.forEach(radio => radio.checked = false);
+        idgender = id;
     }
-////////////////////////////////
-    if (id === 'search_name') {
-        copyListOfUsers = listOfUsers.filter(user => {
-            user.fullName.toLowerCase();
-            return user.fullName.indexOf(search) > -1;
-        })
-    } else {
-        copyListOfUsers = [...listOfUsers];
-        search.value = '';
+    if (idgender) {
+        copyListOfUsers = listOfUsers.filter(
+            (user) => user.gender === idgender
+        );
     }
-/////////////////////////////////////
+
+    if (id === 'search_name' || searchValue) {
+        copyListOfUsers = listOfUsers.filter((user) => {
+            return user.fullName
+            .toLowerCase()
+            .search(searchValue) > -1
+        });
+    }
+
     renderUsers(copyListOfUsers);
 };
 
@@ -118,6 +114,25 @@ const compareName = (firstUser, nextUser) => {
 
 const filterContainer = document.querySelector('.container__filter');
 filterContainer.addEventListener("click", ({ target }) => {
+    if(target.closest(".input__search__name")) return;
     const copyUsersData = [...usersData];
     sortUsers(target.id, copyUsersData);
 });
+
+searchInput.addEventListener("input", ({target})=>{
+    searchValue = target.value.toLowerCase();
+    const copyUsersData = [...usersData];
+    sortUsers(target.id, copyUsersData);
+});
+
+const reset = () => {
+    /*searchInput.value = '';
+    radioAge.forEach(radio => radio.checked = false);
+    radioAlphabet.forEach(radio => radio.checked = false);
+    radioGender.forEach(radio => radio.checked = false);
+    */
+    renderUsers(usersData);
+    copyListOfUsers = [...usersData];
+    filterContainer.reset();
+};
+resetBtn.addEventListener("click", reset);
