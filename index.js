@@ -82,29 +82,19 @@ const sortUsers = (id, listOfUsers) => {
     if (id === 'search_by_alphabet_up') { copyListOfUsers = listOfUsers.sort((first, next) => compareName(first, next)) }
     if (id === 'search_by_alphabet_down') { copyListOfUsers = listOfUsers.sort((first, next) => compareName(next, first)) }
 
-    if (id === 'male' || id === 'female') {
+    if (id === 'male' || id === 'female') { 
         idgender = id;
-    }
-    if (idgender) {
-        copyListOfUsers = listOfUsers.filter(
-            (user) => user.gender === idgender
-        );
+        copyListOfUsers = listOfUsers.filter((user) => user.gender === idgender)
     }
 
-    if (id === 'search_name' || searchValue) {
-        copyListOfUsers = listOfUsers.filter((user) => {
-            return user.fullName
-            .toLowerCase()
-            .search(searchValue) > -1
-        });
+    if (searchValue) {
+        copyListOfUsers = listOfUsers.filter((user) => { return user.fullName.toLowerCase().search(searchValue) > -1 });
     }
 
     renderUsers(copyListOfUsers);
 };
 
-const compareAge = (firstUser, nextUser) => {
-    return firstUser.age - nextUser.age;
-};
+const compareAge = (firstUser, nextUser) => { return firstUser.age - nextUser.age };
 
 const compareName = (firstUser, nextUser) => {
     first = firstUser.fullName.toLowerCase();
@@ -113,26 +103,27 @@ const compareName = (firstUser, nextUser) => {
 };
 
 const filterContainer = document.querySelector('.container__filter');
+
 filterContainer.addEventListener("click", ({ target }) => {
-    if(target.closest(".input__search__name")) return;
+    if (target.closest(".input__search__name")) return;
     const copyUsersData = [...usersData];
     sortUsers(target.id, copyUsersData);
 });
 
-searchInput.addEventListener("input", ({target})=>{
+searchInput.addEventListener("input", ({ target }) => {
     searchValue = target.value.toLowerCase();
     const copyUsersData = [...usersData];
     sortUsers(target.id, copyUsersData);
 });
 
 const reset = () => {
-    /*searchInput.value = '';
+    searchValue = '';
     radioAge.forEach(radio => radio.checked = false);
     radioAlphabet.forEach(radio => radio.checked = false);
     radioGender.forEach(radio => radio.checked = false);
-    */
-    renderUsers(usersData);
+    
     copyListOfUsers = [...usersData];
-    filterContainer.reset();
+    renderUsers(copyListOfUsers);
 };
+
 resetBtn.addEventListener("click", reset);
