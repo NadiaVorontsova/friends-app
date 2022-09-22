@@ -1,4 +1,4 @@
-const URL = 'https://randomuser.me/api/?results=10&nat=ua&inc=picture,name,gender,name,dob,phone,location';
+const URL = 'https://randomuser.me/api/?results=200&nat=ua&inc=picture,name,gender,name,dob,phone,location';
 
 const userCardParentELement = document.querySelector('.container__user__card');
 userCardParentELement.insertAdjacentHTML('beforeend',
@@ -62,62 +62,51 @@ const renderUsers = (listOfUsers) => {
     })
 };
 
-const radioGender = document.querySelectorAll("input[name='search_by_gender']");
-const radioAge = document.querySelectorAll("input[name='search_age']");
-const radioAlphabet = document.querySelectorAll("input[name='search_by_alphabet']");
-
-const searchInput = document.querySelector(".input__search__name");
-const resetBtn = document.querySelector(".reset__button");
-
 let searchValue;
 let idgender;
 
 const sortUsers = (id, listOfUsers) => {
     let copyListOfUsers = [...listOfUsers];
-    /*
-        if (id === 'search_age_up') { 
-            copyListOfUsers = listOfUsers.sort((first, next) => compareAge(first, next)) 
-        }
-        if (id === 'search_age_down') { copyListOfUsers = listOfUsers.sort((first, next) => compareAge(next, first)) }
-    
-        if (id === 'search_by_alphabet_up') { copyListOfUsers = listOfUsers.sort((first, next) => compareName(first, next)) }
-        if (id === 'search_by_alphabet_down') { copyListOfUsers = listOfUsers.sort((first, next) => compareName(next, first)) }
-    
-        if (id === 'male' || id === 'female') { 
-            idgender = id;
-            copyListOfUsers = listOfUsers.filter((user) => user.gender === idgender)
-        }
-    
-        if (searchValue) {
-            copyListOfUsers = listOfUsers.filter((user) => { return user.fullName.toLowerCase().search(searchValue) > -1 });
-        }*/
 
-    if (searchValue) {
-        copyListOfUsers = listOfUsers.filter((user) => { return user.fullName.toLowerCase().search(searchValue) > -1 });
-    }
+    copyListOfUsers = searchByName(copyListOfUsers);
+
     switch (id) {
         case 'search_age_up':
-            copyListOfUsers = listOfUsers.sort((first, next) => compareAge(first, next));
+            copyListOfUsers.sort((first, next) => compareAge(first, next));
             break;
         case 'search_age_down':
-            copyListOfUsers = listOfUsers.sort((first, next) => compareAge(next, first));
+            copyListOfUsers.sort((first, next) => compareAge(next, first));
             break;
         case 'search_by_alphabet_up':
-            copyListOfUsers = listOfUsers.sort((first, next) => compareName(first, next));
+            copyListOfUsers.sort((first, next) => compareName(first, next));
             break;
         case 'search_by_alphabet_down':
-            copyListOfUsers = listOfUsers.sort((first, next) => compareName(next, first));
+            copyListOfUsers.sort((first, next) => compareName(next, first));
             break;
         case 'male':
         case 'female':
             idgender = id;
-            copyListOfUsers = listOfUsers.filter((user) => user.gender === idgender);
             break;
         default:
             break;
     }
-
+    copyListOfUsers = filterByGender(id, copyListOfUsers);
     renderUsers(copyListOfUsers);
+};
+
+const searchByName = (users) => {
+    if (searchValue) {
+        return users.filter((user) => user.fullName.toLowerCase().search(searchValue) > -1);
+    }
+    return users;
+};
+
+const filterByGender = (gender, users) => {
+    if (gender === "male" || gender === "female") {
+        return users.filter((user) => user.gender === idgender);
+    } else {
+        return users;
+    }
 };
 
 const compareAge = (firstUser, nextUser) => { return firstUser.age - nextUser.age };
@@ -127,6 +116,13 @@ const compareName = (firstUser, nextUser) => {
     next = nextUser.fullName.toLowerCase();
     return first < next ? -1 : 1;
 };
+
+const radioGender = document.querySelectorAll("input[name='search_by_gender']");
+const radioAge = document.querySelectorAll("input[name='search_age']");
+const radioAlphabet = document.querySelectorAll("input[name='search_by_alphabet']");
+
+const searchInput = document.querySelector(".input__search__name");
+const resetBtn = document.querySelector(".reset__button");
 
 const filterContainer = document.querySelector('.container__filter');
 
@@ -142,6 +138,7 @@ searchInput.addEventListener("input", ({ target }) => {
 
 const reset = () => {
     searchValue = '';
+    searchInput.value = '';
     radioAge.forEach(radio => radio.checked = false);
     radioAlphabet.forEach(radio => radio.checked = false);
     radioGender.forEach(radio => radio.checked = false);

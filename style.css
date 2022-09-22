@@ -359,6 +359,10 @@
     .show {
         display: block;
     }
+
+    .arrow {
+        font-size: 32px;
+    }
 }
 
 @media(max-height:415px) {
