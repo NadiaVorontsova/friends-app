@@ -69,27 +69,52 @@ const radioAlphabet = document.querySelectorAll("input[name='search_by_alphabet'
 const searchInput = document.querySelector(".input__search__name");
 const resetBtn = document.querySelector(".reset__button");
 
-let copyListOfUsers = [];
-
 let searchValue;
 let idgender;
 
 const sortUsers = (id, listOfUsers) => {
-    copyListOfUsers = [...listOfUsers];
-
-    if (id === 'search_age_up') { copyListOfUsers = listOfUsers.sort((first, next) => compareAge(first, next)) }
-    if (id === 'search_age_down') { copyListOfUsers = listOfUsers.sort((first, next) => compareAge(next, first)) }
-
-    if (id === 'search_by_alphabet_up') { copyListOfUsers = listOfUsers.sort((first, next) => compareName(first, next)) }
-    if (id === 'search_by_alphabet_down') { copyListOfUsers = listOfUsers.sort((first, next) => compareName(next, first)) }
-
-    if (id === 'male' || id === 'female') { 
-        idgender = id;
-        copyListOfUsers = listOfUsers.filter((user) => user.gender === idgender)
-    }
+    let copyListOfUsers = [...listOfUsers];
+    /*
+        if (id === 'search_age_up') { 
+            copyListOfUsers = listOfUsers.sort((first, next) => compareAge(first, next)) 
+        }
+        if (id === 'search_age_down') { copyListOfUsers = listOfUsers.sort((first, next) => compareAge(next, first)) }
+    
+        if (id === 'search_by_alphabet_up') { copyListOfUsers = listOfUsers.sort((first, next) => compareName(first, next)) }
+        if (id === 'search_by_alphabet_down') { copyListOfUsers = listOfUsers.sort((first, next) => compareName(next, first)) }
+    
+        if (id === 'male' || id === 'female') { 
+            idgender = id;
+            copyListOfUsers = listOfUsers.filter((user) => user.gender === idgender)
+        }
+    
+        if (searchValue) {
+            copyListOfUsers = listOfUsers.filter((user) => { return user.fullName.toLowerCase().search(searchValue) > -1 });
+        }*/
 
     if (searchValue) {
         copyListOfUsers = listOfUsers.filter((user) => { return user.fullName.toLowerCase().search(searchValue) > -1 });
+    }
+    switch (id) {
+        case 'search_age_up':
+            copyListOfUsers = listOfUsers.sort((first, next) => compareAge(first, next));
+            break;
+        case 'search_age_down':
+            copyListOfUsers = listOfUsers.sort((first, next) => compareAge(next, first));
+            break;
+        case 'search_by_alphabet_up':
+            copyListOfUsers = listOfUsers.sort((first, next) => compareName(first, next));
+            break;
+        case 'search_by_alphabet_down':
+            copyListOfUsers = listOfUsers.sort((first, next) => compareName(next, first));
+            break;
+        case 'male':
+        case 'female':
+            idgender = id;
+            copyListOfUsers = listOfUsers.filter((user) => user.gender === idgender);
+            break;
+        default:
+            break;
     }
 
     renderUsers(copyListOfUsers);
@@ -107,14 +132,12 @@ const filterContainer = document.querySelector('.container__filter');
 
 filterContainer.addEventListener("click", ({ target }) => {
     if (target.closest(".input__search__name")) return;
-    const copyUsersData = [...usersData];
-    sortUsers(target.id, copyUsersData);
+    sortUsers(target.id, usersData);
 });
 
 searchInput.addEventListener("input", ({ target }) => {
     searchValue = target.value.toLowerCase();
-    const copyUsersData = [...usersData];
-    sortUsers(target.id, copyUsersData);
+    sortUsers(target.id, usersData);
 });
 
 const reset = () => {
@@ -122,9 +145,6 @@ const reset = () => {
     radioAge.forEach(radio => radio.checked = false);
     radioAlphabet.forEach(radio => radio.checked = false);
     radioGender.forEach(radio => radio.checked = false);
-    
-    copyListOfUsers = [...usersData];
-    renderUsers(copyListOfUsers);
 };
 
 resetBtn.addEventListener("click", reset);
