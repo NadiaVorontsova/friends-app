@@ -309,7 +309,7 @@
     .user__name {
         font-size: 28px;
     }
-    
+
     .user__info {
         font-size: 20px;
     }
@@ -331,10 +331,10 @@
     .fixed {
         position: relative;
     }
-    
+
     .container__filter {
         flex: 1 1 auto;
-        padding: 8% 9%;
+        padding: 2% 9% 8% 9%;
         display: none;
     }
 
@@ -342,23 +342,49 @@
         flex: 1 1 60%;
         padding: 6% 4%;
     }
-    
+
     .burger__menu {
         display: block;
-        position: absolute;
-        top:15%;
-        left: 90%;
+        margin: 3% 0 3% 87%;
     }
 
     .filter__items {
         margin: 5% 0;
     }
-    
+
     .filter__item {
         margin-top: 2%;
     }
 
-    .show{
+    .show {
         display: block;
+    }
+}
+
+@media(max-height:415px) {
+    .container__filter {
+        padding: 2% 2%;
+    }
+
+    .filter__items {
+        margin: 8% 0;
+    }
+
+    .filter__item {
+        margin-top: 1%;
+    }
+
+    .text {
+        font-size: 20px;
+    }
+
+    .search__text {
+        font-size: 19px;
+    }
+}
+
+@media(max-height:380px) {
+    .container__filter {
+        padding: 0 0;
     }
 }
